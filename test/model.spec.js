@@ -18,6 +18,23 @@ test('create model', t => {
   t.is(counter.getNamespace(), 'counter')
 })
 
+// TODO: Add more tests
+test('create model with schema', t => {
+  const counter = model({
+    namespace: 'counter',
+    state: 0,
+    schema: {},
+    entityName: 'counter',
+  })
+
+  t.is(counter.getNamespace(), 'counter')
+  t.deepEqual(counter.schema, {})
+  t.deepEqual(counter.insert({ 1: 0 }), {
+    type: 'entity::insert',
+    payload: { name: 'counter', data: { 1: 0 } },
+  })
+})
+
 test('throw error for invalid namespace', t => {
   t.throws(
     () => { model({ namespace: 'foo1', state: 1 }) },

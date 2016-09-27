@@ -39,6 +39,7 @@
   "dependencies": {
     "invariant": "^2.2.1",
     "lodash": "^4.13.1",
+    "normalizr": "^2.2.1",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.0",
     "react-router-redux": "^4.0.5",
