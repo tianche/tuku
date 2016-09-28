@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import model from './model'
 import createApiMiddleware from './middlewares/api'
 import createSagaMiddleware from './middlewares/saga'
+import Entity from './models/Entity'
 import createStore from './createStore'
 
 function feeble(options = {}) {
@@ -31,7 +32,7 @@ function feeble(options = {}) {
   }
 
   function addDefaultModels() {
-    // not default model currently
+    model(Entity)
   }
 
   function start() {
@@ -61,8 +62,8 @@ function feeble(options = {}) {
     return ext(_app)
   }
 
-  addDefaultMiddlewares()
   addDefaultModels()
+  addDefaultMiddlewares()
 
   Object.assign(_app, {
     middleware,

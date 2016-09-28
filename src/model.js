@@ -1,6 +1,7 @@
 import typeSet from './typeSet'
 import { CALL_API, NAMESPACE_PATTERN } from './constants'
 import { createSelector, createStructuredSelector } from 'reselect'
+import { normalize } from 'normalizr'
 import invariant from 'invariant'
 import composeReducers from './composeReducers'
 import isNamespace from './utils/isNamespace'
@@ -162,6 +163,14 @@ function model(options) {
     return reduce
   }
 
+  function proxyEntityActions(Entity) {
+    Entity.proxyActions.forEach((type) => {
+      const fullType = [_namespace, type].join('::')
+      typeSet.add(fullType)
+      _model[type] = (...data) => Entity[type](options.entityName, ...data)
+    })
+  }
+
   function selector(name, ...args) {
     const isOptions = v => !isUndefined(v.structured)
     const last = args.pop()
@@ -179,6 +188,14 @@ function model(options) {
   function effect(effect) {
     _effect = effect
     return _effect
+  }
+
+  function query() {
+    // TODO: query data from entities by ids
+  }
+
+  function associated() {
+    // TODO: associated with model defined in options.schema
   }
 
   function getNamespace() {
@@ -207,7 +224,25 @@ function model(options) {
     return _state
   }
 
+  function toEntities(data) {
+    return normalize(data, options.schema)
+  }
+
+  if (options.schema && options.entityName) {
+    const Entity = require('./models/Entity').default // eslint-disable-line global-require
+    proxyEntityActions(Entity)
+
+    _model = {
+      ..._model,
+      query,
+      associated,
+      toEntities,
+      schema: options.schema,
+    }
+  }
+
   _model = {
+    ..._model,
     action,
     apiAction,
     reducer,
